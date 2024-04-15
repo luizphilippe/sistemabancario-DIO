@@ -9,7 +9,7 @@ menu = """
 => """
 
 saldo = 0
-conta = None
+conta = 12
 agencia = 12
 agencia_digitado = None
 limite = 500
