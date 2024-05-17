@@ -1,0 +1,111 @@
+class ContaBancaria:
+    def __init__(self, agencia, limite_saques=3, limite=500):
+        self.agencia = agencia
+        self.saldo = 0
+        self.limite = limite
+        self.extrato = ""
+        self.numero_saques = 0
+        self.limite_saques = limite_saques
+        self.conta = None
+
+    def verificar_dados(self, conta, agencia_digitado):
+        if agencia_digitado == self.agencia:
+            print("Acesso liberado.")
+            return True
+        else:
+            print("Acesso negado, agência incorreta.")
+            return False
+
+    def depositar(self, valor):
+        if valor > 0:
+            self.saldo += valor
+            self.extrato += f"Depósito: R$ {valor:.2f}\n"
+        else:
+            print("Operação falhou! O valor informado é inválido.")
+
+    def sacar(self, valor):
+        excedeu_saldo = valor > self.saldo
+        excedeu_limite = valor > self.limite
+        excedeu_saques = self.numero_saques >= self.limite_saques
+
+        if excedeu_saldo:
+            print("Operação falhou! Você não tem saldo suficiente.")
+        elif excedeu_limite:
+            print("Operação falhou! O valor do saque excede o limite.")
+        elif excedeu_saques:
+            print("Operação falhou! Número máximo de saques excedido.")
+        elif valor > 0:
+            self.saldo -= valor
+            self.extrato += f"Saque: R$ {valor:.2f}\n"
+            self.numero_saques += 1
+        else:
+            print("Operação falhou! O valor informado é inválido.")
+
+    def exibir_extrato(self):
+        print("\n================ EXTRATO ================")
+        print("Não foram realizadas movimentações." if not self.extrato else self.extrato)
+        print(f"\nSaldo: R$ {self.saldo:.2f}")
+        print("==========================================")
+
+
+def exibir_menu():
+    menu = """
+    [f] Dados
+    [d] Depositar
+    [s] Sacar
+    [e] Extrato
+    [q] Sair
+    => """
+    return input(menu)
+
+
+def obter_dados():
+    conta = str(input("Informe o número da conta: "))
+    agencia_digitado = int(input("Informe o número da agência: "))
+    return conta, agencia_digitado
+
+
+def main():
+    agencia = 12
+    conta_bancaria = ContaBancaria(agencia)
+
+    while True:
+        opcao = exibir_menu()
+
+        if opcao == "f":
+            conta, agencia_digitado = obter_dados()
+            if not conta_bancaria.verificar_dados(conta, agencia_digitado):
+                conta_bancaria.conta = None
+
+        elif opcao == "d":
+            if conta_bancaria.conta is None:
+                print("Você não preencheu seus dados.")
+            else:
+                valor = float(input("Informe o valor do depósito: "))
+                conta_bancaria.depositar(valor)
+
+        elif opcao == "s":
+            if conta_bancaria.conta is None:
+                print("Você não preencheu seus dados.")
+            else:
+                valor = float(input("Informe o valor do saque: "))
+                conta_bancaria.sacar(valor)
+
+        elif opcao == "e":
+            if conta_bancaria.conta is None:
+                print("Você não preencheu seus dados.")
+            else:
+                conta_bancaria.exibir_extrato()
+
+        elif opcao == "q":
+            break
+
+        else:
+            print("Operação inválida, por favor selecione novamente a operação desejada.")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
